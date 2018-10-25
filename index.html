@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="render" content="webkit">
+  <title>{ ...Vuchan, window, global }</title>
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <meta name="keywords" content="wucheng wulecheng givingwu vuchan 吴成 吴乐成">
+  <meta description="努力的走在成为前端大牛的路上。">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="shortcut icon" href="./favicon.ico"/>
+  <link rel="bookmark" href="./favicon.ico"/>
+  <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+</head>
+<body>
+  <!--
+    Welcome,
+    既然你开始阅读注释了，
+    那么你一定是位“有心人”。
+    Good job!
+
+    Wechat: ThanksDad.
+    PhoneNumber: +86 1388087659`.
+
+    不要问我为什么屏幕是白的？
+    因为我真的不知道放什么内容。
+    这是真的。
+
+    讲真，我希望进入一家大厂，证明自己。
+    但我很清楚，需要先在小厂证明自己。
+    但是，我总觉得小厂有些施展不开，不知道为什么。
+
+    喜欢封装，
+    数据结构，
+    设计模式，
+    中高级算法，(讲真，高级算法是有点难)
+    新技术，
+    各种技术。
+
+    `C/Python/Java/JavaScript/Node/bash/shell`
+   -->
+  <main class="main">
+    <!-- personal info -->
+    <section class="content ab-full-screen">
+      <div class="info-inner"></div>
+      <div class="name-inner">
+        <div class="name"><span class="font">吴</span></div>
+        <div class="name"><span class="font">乐</span></div>
+        <div class="name"><span class="font">成</span></div>
+        <div class="name"></div>
+      </div>
+    </section>
+    <!-- transition name -->
+    <section class="content animate-name">
+      <div class="center">
+        <div class="top"></div>
+        <div class="right"></div>
+        <div class="bottom"></div>
+        <div class="left"></div>
+        <div class="name"> Fontend Developer </div>
+      </div>
+      <div class="shade"></div>
+    </section>
+  </main>
+<script>
+window.addEventListener('load', function () {
+  var isArray = function(arr) {
+    return Array.isArray(arr) || Object.prototype.toString.call(arr) === '[object Array]'
+  }
+  var isPlainObject = function(obj) {
+    return typeof obj === 'object' && Object.prototype.toString.call(obj) === '[object Object]'
+  }
+  var isArrayLike = function (obj) {
+    return (!isArray(obj) || !isPlainObject(obj)) && obj.length
+  }
+  var camelize = function (str) {
+    return str.charAt(0).toUpperCase() + str.slice(1)
+  }
+  var each = function (arr, callback) {
+    if (Array.prototype.forEach) {
+      return Array.prototype.forEach.call(arr, function (t, i, arr) {
+        return callback(t, i, arr)
+      })
+    } else {
+      for (var i = 0, l = arr.length; i < l; i++) {
+        callback(arr[i], i, arr)
+      }
+    }
+  }
+  var _prefix = (function (temp) {
+    var prefix = ["webkit", "Moz", "o", "ms"];
+    var props = "";
+    for (var i = 0, l = prefix.length; i < l; i++) {
+      props = prefix[i] + "Transition";
+      if (temp.style[props] !== undefined) {
+        return prefix[i].toLowerCase();
+      }
+    }
+    return false;
+  })(document.createElement('div'));
+  var animationStart = _prefix + camelize('animationStart'),
+      animationEnd   = _prefix + camelize('animationEnd')
+  var content      = document.querySelector('.content.animate-name'),
+      contentName  = content.querySelector('.name'),
+      contentLeft  = content.querySelector('.left'),
+      contentRight = content.querySelector('.right'),
+      contentTop   = content.querySelector('.top'),
+      contentBottom= content.querySelector('.bottom'),
+      contentShade = content.querySelector('.shade')
+  var rightNameInner     = document.querySelector('.name-inner'),
+      rightNameInnerDoms = document.querySelectorAll('.name')
+  // something need to show
+  each([contentTop, contentRight, contentBottom, contentLeft], function shown(item) {
+    item.addEventListener(animationEnd, function (evt) {
+      this.className += ' show'
+      item.removeEventListener(animationEnd, shown)
+    })
+  })
+  // something need to hide
+  contentShade.addEventListener(animationEnd, function hidden(evt) {
+    content.className += ' hide'
+    each(rightNameInnerDoms, function (t, i) {
+      t.className += ' name-' + ++i
+    })
+    contentShade.removeEventListener(animationEnd, hidden)
+  })
+})
+</script>
+</body>
+</html>
