@@ -1,5 +1,5 @@
 # Home
 
-> welcome to my blog of github.io. [home page](https://givingwu.github.io)
+> welcome to my blog of github.io. [Learn more](https://vuchan.github.io)
 
 Thanks.
