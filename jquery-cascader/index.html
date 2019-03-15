@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>jQuery Cascader</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      font-size: 12px;
+    }
+
+    h2 {
+      font-size: 16px;
+      color: #666;
+    }
+
+    .demo {
+      margin: 50px auto 0;
+      text-align: center;
+    }
+
+    .cascader {
+      position: relative;
+      display: inline-block;
+      min-width: 300px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .cascader-hd {
+      display: block;
+      padding:  .2em .5em;
+      border: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .cascader-hd:hover {
+      color: blue;
+      border-color: #ddd;
+    }
+
+    .cascader-bd {
+      display: none;
+      position: absolute;
+      top: 100%;
+      width: 100%;
+      /* min-height: 100px; */
+      margin-top: -1px;
+      border: 1px solid #eee;
+      z-index: 3;
+    }
+
+    .panel,
+    .panel-hd,
+    .panel-bd {
+      text-align: left;
+      background-color: #fff;
+    }
+
+    .panel a {
+      display: inline-block;
+      padding: .25em .5em;
+      color: #333;
+      text-decoration: none;
+    }
+
+    .panel a.active {
+      color: #fff;
+      background-color: #0366d6;
+    }
+
+    .panel-hd {
+      border-bottom: 1px solid #ebebeb;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo">
+    <h2>数据级联选择器 <small> Data Cascader Selector Demo</small></h2>
+      <div class="cascader J_DataCascader">
+        <div class="cascader-hd J_CascaderHead">
+          <div class="cascader-hd-val J_CascaderVal">Select data please</div>
+        </div>
+        <div class="cascader-bd J_CascaderBody">
+          <div class="panel J_Panel">
+            <div class="panel-hd J_PanelHead"></div>
+            <div class="panel-bd J_PanelBody"></div>
+          </div>
+        </div>
+      </div>
+    </h2>
+
+    <h2>地区级联选择器 <small> Address Cascader Selector Demo</small></h2>
+    <div class="cascader J_AddrCascader">
+      <div class="cascader-hd J_CascaderHead">
+        <div class="cascader-hd-val J_CascaderVal">Select address please</div>
+      </div>
+      <div class="cascader-bd J_CascaderBody">
+        <div class="panel J_Panel">
+          <div class="panel-hd J_PanelHead"></div>
+          <div class="panel-bd J_PanelBody"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.bootcss.com/jquery/1.12.0/jquery.js"></script>
+  <script src="../dist/jquery.cascader.umd.js"></script>
+  <script src="./fakedata.js"></script>
+  <script>
+    // Local dataset
+    const queryFromDataSet = (dataset) => (id, idx = 0) => {
+      let data = dataset;
+      let val = [];
+      let notSame = true;
+
+      while (!idx ? notSame : val.length <= idx) {
+        let childrenRef = null;
+        let res = [];
+
+        data &&
+          data.length &&
+          data.forEach((item, index) => {
+            const { value, children, ...prop } = item;
+            const hasChildren = children && children.length;
+            const similar = String(id).startsWith(value);
+
+            if (similar) {
+              childrenRef = children;
+            }
+
+            res.push({
+              hasChildren,
+              active: similar,
+              ...prop,
+              value
+            });
+
+            if (id === value) {
+              notSame = false;
+            }
+          });
+
+        data = childrenRef;
+        val.push(res);
+      }
+
+      let i = val.length - 1;
+
+      while (i >= 0) {
+        let curr = val[i];
+        let parent = val[--i];
+
+        parent &&
+          parent.forEach(item => {
+            if (item.active) {
+              item.children = curr;
+            }
+          });
+      }
+
+      const returns = val[idx]
+      console.log('idx: ', idx);
+      console.log('returns: ', returns);
+
+      return returns;
+    };
+
+    $('.J_DataCascader').initCascader({
+      value: 111,
+      placeholder: 'next data',
+      apiMethod: queryFromDataSet(fakeDataSet),
+      onChange(activeItem, allActiveItems, cascader) {
+        console.log('activeItem: ', activeItem);
+        console.log('allActiveItems: ', allActiveItems);
+        console.log('cascader: ', cascader);
+        console.log('activeItem.hasChildren: ', activeItem.hasChildren);
+
+        if (!activeItem.hasChildren) {
+          cascader.complete(false)
+        }
+      },
+      onComplete(activeItem, allActiveItems, cascader) {
+        const label = cascader.getLabelText()
+        console.log('label: ', label);
+      }
+    })
+
+    $('.J_AddrCascader').initCascader({
+      value: "510199",
+      placeholder: 'next address',
+      apiMethod: queryFromDataSet(MapDataset),
+      onChange(activeItem, allActiveItems, cascader) {
+        console.log('activeItem: ', activeItem);
+        console.log('allActiveItems: ', allActiveItems);
+        console.log('cascader: ', cascader);
+
+        if (!activeItem.hasChildren) {
+          cascader.complete(false)
+        }
+      }
+    })
+  </script>
+</body>
+</html>
